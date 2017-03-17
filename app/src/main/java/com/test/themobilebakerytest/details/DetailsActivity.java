@@ -67,7 +67,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsView, O
                 getSupportActionBar().setHomeButtonEnabled(true);
                 getSupportActionBar().setTitle(null);
             }
-            
+
             user = gson.fromJson(jsonUser, User.class);
             setDetails();
             presenter = new DetailsPresenterImpl(this, new LoadDetailsInteractorImpl(user));
