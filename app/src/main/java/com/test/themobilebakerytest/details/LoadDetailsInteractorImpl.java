@@ -3,7 +3,7 @@ package com.test.themobilebakerytest.details;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
-import com.test.themobilebakerytest.Utils;
+import com.test.themobilebakerytest.utils.Utils;
 import com.test.themobilebakerytest.user.User;
 import com.test.themobilebakerytest.user.UserUtils;
 
@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 import java.net.URL;
 
-import static com.test.themobilebakerytest.Utils.GOOGLE_MAP_API_KEY;
+import static com.test.themobilebakerytest.utils.Utils.GOOGLE_MAP_API_KEY;
 
 /**
  * Created by mmc on 16/3/17.

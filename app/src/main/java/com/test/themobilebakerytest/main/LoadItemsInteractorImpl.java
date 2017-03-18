@@ -3,7 +3,7 @@ package com.test.themobilebakerytest.main;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
-import com.test.themobilebakerytest.Utils;
+import com.test.themobilebakerytest.utils.Utils;
 import com.test.themobilebakerytest.user.User;
 import com.test.themobilebakerytest.user.UserUtils;
 

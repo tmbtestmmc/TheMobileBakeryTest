@@ -1,4 +1,4 @@
-package com.test.themobilebakerytest;
+package com.test.themobilebakerytest.utils;
 
 import android.content.Context;
 import android.util.AttributeSet;
