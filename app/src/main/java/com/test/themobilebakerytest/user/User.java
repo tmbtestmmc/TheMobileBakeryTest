@@ -3,26 +3,56 @@ package com.test.themobilebakerytest.user;
 import android.content.Context;
 import android.content.res.Resources;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.test.themobilebakerytest.R;
 
 /**
  * Created by mmc on 16/3/17.
  */
 
-public class User {
+@Table(name = "users", id = "_id")
+public class User extends Model {
 
+    @Expose
+    @Column(name = "gender")
     String gender;
+    @Expose
+    @Column(name = "name")
     Name name;
+    @Expose
+    @Column(name = "location")
     Location location;
+    @Expose
+    @Column(name = "email")
     String email;
+    @Expose
+    @Column(name = "login")
     Login login;
+    @Expose
+    @Column(name = "phone")
     String phone;
+    @Expose
+    @Column(name = "cell")
     String cell;
-    ID id;
+    @SerializedName("id")
+    @Expose
+    @Column(name = "userID")
+    ID userID;
+    @Expose
+    @Column(name = "picture")
     Picture picture;
-    String nat;
+    @SerializedName("nat")
+    @Expose
+    @Column(name = "nationality")
+    String nationality;
 
-    public User(String gender, Name name, Location location, String email, Login login, String phone, String cell, ID id, Picture picture, String nat) {
+    public User(){}
+
+    public User(String gender, Name name, Location location, String email, Login login, String phone, String cell, ID id, Picture picture, String nationality) {
         this.gender = gender;
         this.name = name;
         this.location = location;
@@ -30,9 +60,9 @@ public class User {
         this.login = login;
         this.phone = phone;
         this.cell = cell;
-        this.id = id;
+        this.userID = id;
         this.picture = picture;
-        this.nat = nat;
+        this.nationality = nationality;
     }
 
     public String getGender() {
@@ -63,8 +93,8 @@ public class User {
         return cell;
     }
 
-    public ID getId() {
-        return id;
+    public ID getUserID() {
+        return userID;
     }
 
     public Picture getPicture() {
@@ -72,7 +102,7 @@ public class User {
     }
 
     public String getNationality() {
-        return nat;
+        return nationality;
     }
 
     public String toString(Context context) {
@@ -92,8 +122,8 @@ public class User {
         sb.append(r.getString(R.string.Phone)).append(COLON).append(getPhone()).append(BR_BR);
         sb.append(r.getString(R.string.Cell)).append(COLON).append(getCell()).append(BR_BR);
         sb.append(r.getString(R.string.ID)).append(COLON).append(BR);
-        sb.append(T).append(r.getString(R.string.Name)).append(COLON).append(getId().getName()).append(BR);
-        sb.append(T).append(r.getString(R.string.Value)).append(COLON).append(getId().getValue()).append(BR_BR);
+        sb.append(T).append(r.getString(R.string.Name)).append(COLON).append(getUserID().getName()).append(BR);
+        sb.append(T).append(r.getString(R.string.Value)).append(COLON).append(getUserID().getValue()).append(BR_BR);
         sb.append(r.getString(R.string.Nationality)).append(COLON).append(getNationality());
         return sb.toString();
     }

@@ -1,5 +1,7 @@
 package com.test.themobilebakerytest.details;
 
+import com.test.themobilebakerytest.user.User;
+
 /**
  * Created by mmc on 16/3/17.
  */
@@ -7,9 +9,9 @@ package com.test.themobilebakerytest.details;
 public interface LoadDetailsInteractor {
 
     interface OnFinishedListener {
-        void onFinished(Double[] coordinates);
+        void onFinished(User user);
     }
 
-    void loadDetails(OnFinishedListener listener);
+    void loadCoordinates(String jsonString, OnFinishedListener listener);
 
 }

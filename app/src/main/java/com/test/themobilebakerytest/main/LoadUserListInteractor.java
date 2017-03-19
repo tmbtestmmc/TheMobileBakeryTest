@@ -8,7 +8,7 @@ import java.util.List;
  * Created by mmc on 16/3/17.
  */
 
-public interface LoadItemsInteractor {
+public interface LoadUserListInteractor {
 
     interface OnFinishedListener {
         void onFinished(List<User> items);

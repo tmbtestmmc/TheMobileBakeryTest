@@ -8,14 +8,14 @@ import java.util.List;
  * Created by mmc on 16/3/17.
  */
 
-public class MainPresenterImpl implements MainPresenter, LoadItemsInteractor.OnFinishedListener {
+public class MainPresenterImpl implements MainPresenter, LoadUserListInteractor.OnFinishedListener {
 
     private MainView mainView;
-    private LoadItemsInteractor loadItemsInteractor;
+    private LoadUserListInteractor loadUserListInteractor;
 
-    public MainPresenterImpl(MainView mainView, LoadItemsInteractor loadItemsInteractor) {
+    public MainPresenterImpl(MainView mainView, LoadUserListInteractor loadUserListInteractor) {
         this.mainView = mainView;
-        this.loadItemsInteractor = loadItemsInteractor;
+        this.loadUserListInteractor = loadUserListInteractor;
     }
 
     @Override
@@ -23,7 +23,7 @@ public class MainPresenterImpl implements MainPresenter, LoadItemsInteractor.OnF
         if (mainView != null) {
             mainView.showProgress();
         }
-        loadItemsInteractor.loadItems(this);
+        loadUserListInteractor.loadItems(this);
     }
 
     @Override

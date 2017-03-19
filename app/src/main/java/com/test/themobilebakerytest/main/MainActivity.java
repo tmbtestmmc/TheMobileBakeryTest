@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.test.themobilebakerytest.R;
 import com.test.themobilebakerytest.details.DetailsActivity;
 import com.test.themobilebakerytest.user.User;
@@ -35,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements MainView, UserLis
         layoutManager = new LinearLayoutManager(this);
         rvUserList.setLayoutManager(layoutManager);
         rvUserList.setItemAnimator(new DefaultItemAnimator());
-        presenter = new MainPresenterImpl(this, new LoadItemsInteractorImpl());
+        presenter = new MainPresenterImpl(this, new LoadUserListInteractorImpl());
     }
 
     @Override
@@ -79,9 +80,9 @@ public class MainActivity extends AppCompatActivity implements MainView, UserLis
     @Override
     public void onUserClick(int position) {
         //presenter.onItemClicked(position);
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         Intent intent = new Intent(this, DetailsActivity.class);
-        intent.putExtra("user", gson.toJson(adapter.getItem(position)));
+        intent.putExtra("user", gson.toJson(adapter.getItem(position), User.class));
         startActivity(intent);
     }
 }

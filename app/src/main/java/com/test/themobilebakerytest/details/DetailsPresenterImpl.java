@@ -1,5 +1,7 @@
 package com.test.themobilebakerytest.details;
 
+import com.test.themobilebakerytest.user.User;
+
 /**
  * Created by mmc on 16/3/17.
  */
@@ -15,11 +17,11 @@ public class DetailsPresenterImpl implements DetailsPresenter, LoadDetailsIntera
     }
 
     @Override
-    public void onResume() {
+    public void onCreate(String jsonString) {
         if (detailsView != null) {
             detailsView.showProgress();
         }
-        loadDetailsInteractor.loadDetails(this);
+        loadDetailsInteractor.loadCoordinates(jsonString, this);
     }
 
     @Override
@@ -28,9 +30,9 @@ public class DetailsPresenterImpl implements DetailsPresenter, LoadDetailsIntera
     }
 
     @Override
-    public void onFinished(Double[] coordinates) {
+    public void onFinished(User user) {
         if (detailsView != null) {
-            detailsView.setCoordinates(coordinates);
+            detailsView.userLoaded(user);
             detailsView.hideProgress();
         }
     }

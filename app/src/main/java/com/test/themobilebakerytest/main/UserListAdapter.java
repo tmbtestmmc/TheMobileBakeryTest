@@ -47,6 +47,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         User user = users.get(position);
         holder.tvNameFull.setText(user.getName().toString());
         holder.tvAddress.setText(user.getLocation().getFullLocation());
+
         Glide
                 .with(context)
                 .load(user.getPicture().getThumbnail())
@@ -54,6 +55,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
                 .crossFade()
                 .bitmapTransform(new CropCircleTransformation(context))
                 .into(holder.ivUserImage);
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

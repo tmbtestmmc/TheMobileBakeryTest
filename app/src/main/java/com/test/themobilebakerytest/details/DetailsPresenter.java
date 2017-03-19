@@ -5,7 +5,7 @@ package com.test.themobilebakerytest.details;
  */
 
 public interface DetailsPresenter {
-    void onResume();
+    void onCreate(String userJson);
 
     void onDestroy();
 }

@@ -4,11 +4,6 @@
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
-    -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
@@ -17,7 +12,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name="com.activeandroid.app.Application">
         <activity android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -40,6 +36,13 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
+        <meta-data android:name="AA_DB_NAME" android:value="UsersDB" />
+        <meta-data android:name="AA_DB_VERSION" android:value="1" />
+
+        <meta-data
+            android:name="AA_MODELS"
+            android:value="com.test.themobilebakerytest.user.ID, com.test.themobilebakerytest.user.Location, com.test.themobilebakerytest.user.Login, com.test.themobilebakerytest.user.Name, com.test.themobilebakerytest.user.Picture, com.test.themobilebakerytest.user.User" />
+
 
     </application>
 

@@ -20,7 +20,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.gson.Gson;
 import com.test.themobilebakerytest.R;
 import com.test.themobilebakerytest.user.User;
 
@@ -44,40 +43,32 @@ public class DetailsActivity extends AppCompatActivity implements DetailsView, O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_details);
 
-        Gson gson = new Gson();
-        String jsonUser = getIntent().getStringExtra("user");
+        nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScrollView);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
+        ivUserImageLarge = (ImageView) findViewById(R.id.ivUserImageLarge);
+        tvDetails = (TextView) findViewById(R.id.tvDescription);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        flMap = (FrameLayout) findViewById(R.id.flMap);
+        tvNotFound = (TextView) findViewById(R.id.tvNotFound);
 
-        if (jsonUser != null) {
-
-            setContentView(R.layout.activity_details);
-
-            nestedScrollView = (NestedScrollView) findViewById(R.id.nestedScrollView);
-            progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-            ivUserImageLarge = (ImageView) findViewById(R.id.ivUserImageLarge);
-            tvDetails = (TextView) findViewById(R.id.tvDescription);
-            toolbar = (Toolbar) findViewById(R.id.toolbar);
-            flMap = (FrameLayout) findViewById(R.id.flMap);
-            tvNotFound = (TextView) findViewById(R.id.tvNotFound);
-
-            setSupportActionBar(toolbar);
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                getSupportActionBar().setHomeButtonEnabled(true);
-                getSupportActionBar().setTitle(null);
-            }
-
-            user = gson.fromJson(jsonUser, User.class);
-            setDetails();
-            presenter = new DetailsPresenterImpl(this, new LoadDetailsInteractorImpl(user));
-            mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-            mapFragment.getMapAsync(this);
-        } else {
-            Toast.makeText(this, R.string.Error_loading_user, Toast.LENGTH_LONG).show();
-            finish();
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setTitle(null);
         }
+
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        presenter = new DetailsPresenterImpl(this, new LoadDetailsInteractorImpl());
+
+        String jsonUser = getIntent().getStringExtra("user");
+        presenter.onCreate(jsonUser);
 
     }
 
@@ -100,13 +91,6 @@ public class DetailsActivity extends AppCompatActivity implements DetailsView, O
         nestedScrollView.setVisibility(View.VISIBLE);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (presenter != null) {
-            presenter.onResume();
-        }
-    }
 
     @Override
     protected void onDestroy() {
@@ -117,26 +101,33 @@ public class DetailsActivity extends AppCompatActivity implements DetailsView, O
     }
 
     @Override
-    public void setCoordinates(Double[] coordinates) {
-        if (coordinates != null) {
-            this.lat = coordinates[0];
-            this.lng = coordinates[1];
+    public void userLoaded(User user) {
+        this.user = user;
+        if (user != null) {
+            if (user.getLocation().getLatitude() != null) {
+                this.lat = user.getLocation().getLatitude();
+                this.lng = user.getLocation().getLongitude();
+            } else {
+                flMap.setVisibility(View.GONE);
+                tvNotFound.setVisibility(View.VISIBLE);
+            }
+            progressBar.setVisibility(View.GONE);
+            setUserDetailsToView();
+            setCoordinatesToMap();
         } else {
-            flMap.setVisibility(View.GONE);
-            tvNotFound.setVisibility(View.VISIBLE);
+            Toast.makeText(this, R.string.Error_loading_user, Toast.LENGTH_LONG).show();
+            finish();
         }
-        progressBar.setVisibility(View.GONE);
-        setCoordinatesToMap();
 
     }
 
-    private void setDetails() {
+    private void setUserDetailsToView() {
         collapsingToolbarLayout.setTitle(user.getName().toString());
         tvDetails.setText(user.toString(this));
-
         Glide
                 .with(this)
                 .load(user.getPicture().getLarge())
+                .error(R.drawable.icon_photo_not_loaded_256)
                 .crossFade()
                 .into(ivUserImageLarge);
 

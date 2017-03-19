@@ -3,9 +3,9 @@ package com.test.themobilebakerytest.details;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
-import com.test.themobilebakerytest.utils.Utils;
 import com.test.themobilebakerytest.user.User;
 import com.test.themobilebakerytest.user.UserUtils;
+import com.test.themobilebakerytest.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,33 +20,31 @@ import static com.test.themobilebakerytest.utils.Utils.GOOGLE_MAP_API_KEY;
 
 public class LoadDetailsInteractorImpl implements LoadDetailsInteractor {
 
-    private User user;
     private final String URL_START = "https://maps.googleapis.com/maps/api/geocode/json?address=";
     private final String URL_KEY = "&key=";
 
-    LoadDetailsInteractorImpl(User user) {
-        this.user = user;
+    LoadDetailsInteractorImpl() {
     }
 
     @Override
-    public void loadDetails(final OnFinishedListener listener) {
-        new AsyncTask<User, Void, Double[]>() {
+    public void loadCoordinates(final String jsonString, final OnFinishedListener listener) {
+        new AsyncTask<String, Void, User>() {
             @Override
-            protected Double[] doInBackground(User... users) {
+            protected User doInBackground(String... jsonStrings) {
 
-                Double[] coords = null;
-                URL urlFullAddress = Utils.createUrl(URL_START + users[0].getLocation().getUrlLocation() + URL_KEY + GOOGLE_MAP_API_KEY);
+                User user = UserUtils.extractUserFromJSON(jsonStrings[0]);
+                Double[] coords = new Double[2];
+                URL urlFullAddress = Utils.createUrl(URL_START + user.getLocation().getUrlLocation() + URL_KEY + GOOGLE_MAP_API_KEY);
 
                 String jsonCoord = null;
                 jsonCoord = Utils.makeHttpRequest(urlFullAddress);
 
-                // La mayor parte de las direcciones random no existen, por lo que si se da el caso buscamos las coordenadas únicamente de la ciudad.
                 if (!TextUtils.isEmpty(jsonCoord)) {
                     try {
                         JSONObject jsonObject = new JSONObject(jsonCoord);
                         String status = jsonObject.optString("status");
                         if (status != null && status.equals("ZERO_RESULTS")) {
-                            URL urlCity = Utils.createUrl(URL_START + users[0].getLocation().getUrlCity() + URL_KEY + GOOGLE_MAP_API_KEY);
+                            URL urlCity = Utils.createUrl(URL_START + user.getLocation().getUrlCity() + URL_KEY + GOOGLE_MAP_API_KEY);
                             jsonCoord = Utils.makeHttpRequest(urlCity);
                         }
                     } catch (JSONException e) {
@@ -58,14 +56,17 @@ public class LoadDetailsInteractorImpl implements LoadDetailsInteractor {
                     coords = UserUtils.extractLatAndLongFromJSON(jsonCoord);
                 }
 
-                return coords;
+                user.getLocation().setLatitude(coords[0]);
+                user.getLocation().setLongitude(coords[1]);
+
+                return user;
             }
 
             @Override
-            protected void onPostExecute(Double[] coords) {
-                listener.onFinished(coords);
+            protected void onPostExecute(User user) {
+                listener.onFinished(user);
             }
-        }.execute(user);
+        }.execute(jsonString);
     }
 
 
