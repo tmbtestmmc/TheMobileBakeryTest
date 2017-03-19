@@ -33,6 +33,7 @@ public class LoadDetailsInteractorImpl implements LoadDetailsInteractor {
 
         user = UserUtils.extractUserFromJSON(jsonString);
         this.listener = listener;
+        listener.onUserLoaded(user);
 
         if (user != null) {
 
@@ -61,24 +62,24 @@ public class LoadDetailsInteractorImpl implements LoadDetailsInteractor {
 
                     if (addressFound(jsonCoords)) {
                         setCoordinatesToUser(jsonCoords, user);
-                        listener.onFinished(user);
+                        listener.onCoordinatesLoaded(user);
                     } else {
                         locationsIndex++;
                         if (lessSpecificAddressesAreAvailable()) {
                             makeCallToGetCoordinates();
                         } else {
-                            listener.onFinished(user);
+                            listener.onCoordinatesLoaded(user);
                         }
                     }
 
                 } else {
-                    listener.onFinished(user);
+                    listener.onCoordinatesLoaded(user);
                 }
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable t) {
-                listener.onFinished(user);
+                listener.onCoordinatesLoaded(user);
             }
         });
     }

@@ -9,7 +9,8 @@ import com.test.themobilebakerytest.user.User;
 public interface LoadDetailsInteractor {
 
     interface OnFinishedListener {
-        void onFinished(User user);
+        void onUserLoaded(User user);
+        void onCoordinatesLoaded(User user);
     }
 
     void loadCoordinates(String jsonString, OnFinishedListener listener);

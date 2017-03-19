@@ -101,7 +101,20 @@ public class DetailsActivity extends AppCompatActivity implements DetailsView, O
     }
 
     @Override
-    public void userLoaded(User user) {
+    public void onUserLoaded(User user) {
+        this.user = user;
+        if (user != null) {
+            setUserDetailsToView();
+            progressBar.setVisibility(View.GONE);
+        } else {
+            Toast.makeText(this, R.string.Error_loading_user, Toast.LENGTH_LONG).show();
+            finish();
+        }
+
+    }
+
+    @Override
+    public void onCoordinatesLoaded(User user) {
         this.user = user;
         if (user != null) {
             if (user.getLocation().getLatitude() != null) {
@@ -111,14 +124,8 @@ public class DetailsActivity extends AppCompatActivity implements DetailsView, O
                 flMap.setVisibility(View.GONE);
                 tvNotFound.setVisibility(View.VISIBLE);
             }
-            progressBar.setVisibility(View.GONE);
-            setUserDetailsToView();
             setCoordinatesToMap();
-        } else {
-            Toast.makeText(this, R.string.Error_loading_user, Toast.LENGTH_LONG).show();
-            finish();
         }
-
     }
 
     private void setUserDetailsToView() {

@@ -30,9 +30,17 @@ public class DetailsPresenterImpl implements DetailsPresenter, LoadDetailsIntera
     }
 
     @Override
-    public void onFinished(User user) {
+    public void onUserLoaded(User user) {
         if (detailsView != null) {
-            detailsView.userLoaded(user);
+            detailsView.hideProgress();
+            detailsView.onUserLoaded(user);
+        }
+    }
+
+    @Override
+    public void onCoordinatesLoaded(User user) {
+        if (detailsView != null) {
+            detailsView.onCoordinatesLoaded(user);
             detailsView.hideProgress();
         }
     }

@@ -11,5 +11,7 @@ public interface DetailsView {
 
     void hideProgress();
 
-    void userLoaded(User user);
+    void onUserLoaded(User user);
+
+    void onCoordinatesLoaded(User user);
 }
