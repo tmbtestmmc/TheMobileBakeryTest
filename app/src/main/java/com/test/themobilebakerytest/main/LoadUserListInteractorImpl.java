@@ -1,20 +1,23 @@
 package com.test.themobilebakerytest.main;
 
-import android.os.AsyncTask;
-import android.text.TextUtils;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 
-import com.google.gson.Gson;
+import com.test.themobilebakerytest.R;
 import com.test.themobilebakerytest.user.User;
+import com.test.themobilebakerytest.user.UserList;
 import com.test.themobilebakerytest.user.UserUtils;
-import com.test.themobilebakerytest.utils.Utils;
+import com.test.themobilebakerytest.utils.ApiService;
+import com.test.themobilebakerytest.utils.RetroClient;
+import com.test.themobilebakerytest.utils.TaskFinishedListener;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by mmc on 16/3/17.
@@ -23,55 +26,62 @@ import java.util.List;
 public class LoadUserListInteractorImpl implements LoadUserListInteractor {
 
     private final String URL_USERS = "https://api.randomuser.me/?results=100&seed=themobilebakery";
+    private List<User> users = new ArrayList<>();
 
     @Override
     public void loadItems(final OnFinishedListener listener) {
-        new AsyncTask<Void, Void, List<User>>() {
+
+        UserUtils.getUsersFromDatabase(new TaskFinishedListener<List<User>>() {
             @Override
-            protected List<User> doInBackground(Void... params) {
+            public void onSuccess(List<User> object) {
+                listener.onFinished(object);
+            }
 
-                List<User> users = UserUtils.getUsersFromDatabase();
+            @Override
+            public void onFailure(List<User> object) {
+                storeUsersFromWeb(listener);
+            }
+        });
 
-                if (users == null || users.size() == 0) {
-                    URL url = Utils.createUrl(URL_USERS);
+    }
 
-                    String jsonUsers = Utils.makeHttpRequest(url);
+    @Override
+    public void onDeleteUserClicked(Context context, final User user, final int position, final OnUserDeletedListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(R.string.Delete_this_user_);
+        builder.setNegativeButton(android.R.string.cancel, null);
+        builder.setPositiveButton(R.string.Delete, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                user.delete();
+                listener.onUserDeleted(user, position);
+            }
+        });
+        builder.show();
+    }
 
-                    if (jsonUsers == null) {
-                        cancel(true);
-                    }
 
-                    if (!TextUtils.isEmpty(jsonUsers)) {
-                        try {
-                            JSONArray array = new JSONObject(jsonUsers).getJSONArray("results");
-                            users = new ArrayList<>();
-                            Gson gson = new Gson();
-                            for (int i = 0; i < array.length(); i++) {
-                                String jsonUserTemp = array.getJSONObject(i).toString();
-                                User userTemp = gson.fromJson(jsonUserTemp, User.class);
-                                users.add(userTemp);
-                            }
-                            UserUtils.saveMultipleUsersToDatabase(users);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
 
-                    }
+    private void storeUsersFromWeb(final OnFinishedListener listener) {
+        ApiService api = RetroClient.getApiService(RetroClient.ROOT_URL_RANDOMUSER);
 
+        Call<UserList> userListCall = api.getUsersJson();
+
+        userListCall.enqueue(new Callback<UserList>() {
+            @Override
+            public void onResponse(Call<UserList> call, Response<UserList> response) {
+                if (response.isSuccessful()) {
+                    users = response.body().getUsers();
                 }
-                return users;
-            }
-
-            @Override
-            protected void onPostExecute(List<User> users) {
                 listener.onFinished(users);
+                UserUtils.saveMultipleUsersToDatabase(users, null);
             }
 
             @Override
-            protected void onCancelled(List<User> users) {
+            public void onFailure(Call<UserList> call, Throwable t) {
                 listener.onFinishedError(users, "Error");
             }
-        }.execute();
+        });
     }
 
 }

@@ -3,8 +3,10 @@ package com.test.themobilebakerytest.main;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -43,10 +45,29 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         User user = users.get(position);
         holder.tvNameFull.setText(user.getName().toString());
         holder.tvAddress.setText(user.getLocation().getFullLocation());
+        holder.ivMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(context, holder.ivMenu);
+                popupMenu.getMenuInflater().inflate(R.menu.menu_user_list, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch(item.getItemId()) {
+                            case R.id.menu_delete:
+                                userListItemClick.onDeleteClick(holder.getAdapterPosition());
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
 
         Glide
                 .with(context)
@@ -81,23 +102,32 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         return TextDrawable.builder().buildRound(initial, color);
     }
 
+    public void removeAt(int position) {
+        if (position >= 0 && position < users.size()) {
+            users.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, users.size());
+        }
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView ivUserImage;
-        public TextView tvNameFull;
-        public TextView tvAddress;
+        public ImageView ivUserImage, ivMenu;
+        public TextView tvNameFull, tvAddress;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.ivUserImage = (ImageView) itemView.findViewById(R.id.civImage);
             this.tvNameFull = (TextView) itemView.findViewById(R.id.tvTitle);
             this.tvAddress = (TextView) itemView.findViewById(R.id.tvDescription);
+            this.ivMenu = (ImageView) itemView.findViewById(R.id.ivMenu);
         }
 
     }
 
     public interface UserListItemClick {
         void onUserClick(int position);
+        void onDeleteClick(int position);
     }
 
 }

@@ -105,6 +105,10 @@ public class User extends Model {
         return nationality;
     }
 
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
     public String toString(Context context) {
         final String COLON = ": ";
         final String BR = "\n";

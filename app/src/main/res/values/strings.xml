@@ -35,4 +35,6 @@ Traducción hecha por H. Rackham en 1914
     <string name="Personal_data">Personal data</string>
     <string name="Not_found">Not found</string>
     <string name="Error_loading_user">Error loading user</string>
+    <string name="Delete">Delete</string>
+    <string name="Delete_this_user_">Delete this user?</string>
 </resources>

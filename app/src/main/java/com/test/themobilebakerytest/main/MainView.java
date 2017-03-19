@@ -18,4 +18,6 @@ public interface MainView {
 
     void showError(String error);
 
+    void onUserDeleted(User user, int position);
+
 }

@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:padding="@dimen/default_padding"
+    android:paddingLeft="@dimen/default_padding"
+    android:paddingTop="@dimen/default_padding"
+    android:paddingBottom="@dimen/default_padding"
+    android:paddingRight="8dp"
     android:orientation="horizontal"
     android:background="?attr/selectableItemBackground">
     
@@ -15,7 +18,8 @@
         />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="16dp"
@@ -39,5 +43,14 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:id="@+id/ivMenu"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:padding="6dp"
+        android:src="@drawable/ic_action_overflow"
+        android:layout_gravity="top"/>
     
 </LinearLayout>

@@ -1,5 +1,7 @@
 package com.test.themobilebakerytest.main;
 
+import android.content.Context;
+
 import com.test.themobilebakerytest.user.User;
 
 import java.util.List;
@@ -29,6 +31,22 @@ public class MainPresenterImpl implements MainPresenter, LoadUserListInteractor.
     @Override
     public void onItemClicked(int position) {
 
+    }
+
+    @Override
+    public void onDeleteClick(Context context, User user, int position) {
+        loadUserListInteractor.onDeleteUserClicked(context, user, position, new LoadUserListInteractor.OnUserDeletedListener() {
+            @Override
+            public void onUserDeleted(User user, int position) {
+                mainView.onUserDeleted(user, position);
+            }
+        });
+
+    }
+
+    @Override
+    public void onUserDeleted(User user, int position) {
+        mainView.onUserDeleted(user, position);
     }
 
     @Override

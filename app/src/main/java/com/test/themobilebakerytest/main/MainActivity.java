@@ -64,6 +64,11 @@ public class MainActivity extends AppCompatActivity implements MainView, UserLis
     }
 
     @Override
+    public void onUserDeleted(User user, int position) {
+        adapter.removeAt(position);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (adapter == null) {
@@ -84,5 +89,10 @@ public class MainActivity extends AppCompatActivity implements MainView, UserLis
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra("user", gson.toJson(adapter.getItem(position), User.class));
         startActivity(intent);
+    }
+
+    @Override
+    public void onDeleteClick(int position) {
+        presenter.onDeleteClick(this, adapter.getItem(position), position);
     }
 }

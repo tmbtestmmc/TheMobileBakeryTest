@@ -1,5 +1,7 @@
 package com.test.themobilebakerytest.main;
 
+import android.content.Context;
+
 import com.test.themobilebakerytest.user.User;
 
 import java.util.List;
@@ -16,5 +18,12 @@ public interface LoadUserListInteractor {
     }
 
     void loadItems(OnFinishedListener listener);
+
+    void onDeleteUserClicked(Context context, User user, int position, OnUserDeletedListener onUserDeletedListener);
+
+    interface OnUserDeletedListener {
+        void onUserDeleted(User user, int position);
+    }
+
 
 }
