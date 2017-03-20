@@ -26,19 +26,19 @@ import retrofit2.Response;
 public class LoadUserListInteractorImpl implements LoadUserListInteractor {
 
     private final String URL_USERS = "https://api.randomuser.me/?results=100&seed=themobilebakery";
-    private List<User> users = new ArrayList<>();
+    //private List<User> users = new ArrayList<>();
 
     @Override
     public void loadItems(final OnFinishedListener listener) {
 
         UserUtils.getUsersFromDatabase(new TaskFinishedListener<List<User>>() {
             @Override
-            public void onSuccess(List<User> object) {
-                listener.onFinished(object);
+            public void onSuccess(List<User> usersWithIds) {
+                listener.onFinished(usersWithIds);
             }
 
             @Override
-            public void onFailure(List<User> object) {
+            public void onFailure(List<User> emptyOrNullList) {
                 storeUsersFromWeb(listener);
             }
         });
@@ -63,6 +63,8 @@ public class LoadUserListInteractorImpl implements LoadUserListInteractor {
 
 
     private void storeUsersFromWeb(final OnFinishedListener listener) {
+
+
         ApiService api = RetroClient.getApiService(RetroClient.ROOT_URL_RANDOMUSER);
 
         Call<UserList> userListCall = api.getUsersJson();
@@ -70,16 +72,39 @@ public class LoadUserListInteractorImpl implements LoadUserListInteractor {
         userListCall.enqueue(new Callback<UserList>() {
             @Override
             public void onResponse(Call<UserList> call, Response<UserList> response) {
+                List<User> usersWithoutSQLIds = new ArrayList<>();
+
                 if (response.isSuccessful()) {
-                    users = response.body().getUsers();
+                    usersWithoutSQLIds = response.body().getUsers();
                 }
-                listener.onFinished(users);
-                UserUtils.saveMultipleUsersToDatabase(users, null);
+                UserUtils.saveMultipleUsersToDatabase(usersWithoutSQLIds, new TaskFinishedListener<List<User>>() {
+                    @Override
+                    public void onSuccess(List<User> usersWithoutSQLIds) {
+
+                        UserUtils.getUsersFromDatabase(new TaskFinishedListener<List<User>>() {
+                            @Override
+                            public void onSuccess(List<User> usersWithSQLIds) {
+                                listener.onFinished(usersWithSQLIds);
+                            }
+
+                            @Override
+                            public void onFailure(List<User> usersWithoutSQLIds) {
+                                listener.onFinished(usersWithoutSQLIds);
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onFailure(List<User> usersWithoutSQLIds) {
+                        listener.onFinished(usersWithoutSQLIds);
+                    }
+                });
             }
 
             @Override
             public void onFailure(Call<UserList> call, Throwable t) {
-                listener.onFinishedError(users, "Error");
+                listener.onFinishedError(null, "Error");
             }
         });
     }
